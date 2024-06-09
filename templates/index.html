@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Model Downloader</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	</head>
+	<body>
+		<div class="container mt-5">
+			<h1 class="mb-4">Download Models</h1>
+			<form id="download-form">
+				<div class="mb-3">
+					<label for="model_name" class="form-label">Model Name</label>
+					<input type="text" class="form-control" id="model_name" name="model_name" required>
+				</div>
+				<div class="mb-3">
+					<label for="repo_url" class="form-label">Repository URL</label>
+					<input type="url" class="form-control" id="repo_url" name="repo_url" required>
+				</div>
+				<button type="submit" class="btn btn-primary">Download</button>
+			</form>
+			<button id="download-small-model" class="btn btn-secondary mt-3">Download Small Model (distilbert-base-uncased)</button>
+			<div id="response-message" class="mt-3"></div>
+		</div>
+		<script>
+			$( document ).ready( function () {
+
+
+
+				$( '#download-form' ).on( 'submit', function ( event ) {
+
+
+
+					event.preventDefault();
+					let formData = $( this ).serialize();
+					$.post( '/download', formData, function ( response ) {
+
+
+
+						$( '#response-message' ).html( '<div class="alert alert-success">' + response.message + '</div>' );
+
+
+
+					} ).fail( function ( xhr ) {
+
+
+
+						$( '#response-message' ).html( '<div class="alert alert-danger">' + xhr.responseJSON.error + '</div>' );
+
+
+
+					} );
+
+
+
+				} );
+
+				$( '#download-small-model' ).on( 'click', function () {
+
+
+
+					$.ajax( {
+
+
+
+						url: '/download_small_model',
+						method: 'POST',
+						contentType: 'application/json',
+						data: JSON.stringify(
+							{ model_name: 'distilbert-base-uncased' }
+						),
+						success: function ( response ) {
+
+
+
+							$( '#response-message' ).html( '<div class="alert alert-success">' + response.message + '</div>' );
+
+
+
+						},
+						error: function ( xhr ) {
+
+
+
+							$( '#response-message' ).html( '<div class="alert alert-danger">' + xhr.responseJSON.error + '</div>' );
+
+
+
+						}
+
+					} );
+
+
+
+				} );
+
+
+
+			} );
+		</script>
+	</body>
+</html>
